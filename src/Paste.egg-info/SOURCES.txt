@@ -1,0 +1,10 @@
+README.txt
+setup.cfg
+setup.py
+src/Paste.egg-info/PKG-INFO
+src/Paste.egg-info/SOURCES.txt
+src/Paste.egg-info/dependency_links.txt
+src/Paste.egg-info/top_level.txt
+src/Paste.egg-info/zip-safe
+src/urlmap/__init__.py
+src/urlmap/urlmap.py
