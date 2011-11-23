@@ -4,11 +4,10 @@
 Map URL prefixes to WSGI applications.  See ``URLMap``
 """
 
-from UserDict import DictMixin
 import re
 import os
 import cgi
-from paste import httpexceptions
+from webob import exc
 
 __all__ = ['URLMap', 'PathProxyURLMap']
 
@@ -67,7 +66,7 @@ def parse_path_expression(path):
         s += path
     return s
 
-class URLMap(DictMixin):
+class URLMap(dict):
 
     """
     URLMap instances are dictionary-like object that dispatch to one
@@ -104,9 +103,9 @@ class URLMap(DictMixin):
         extra += '\nSCRIPT_NAME: %r' % environ.get('SCRIPT_NAME')
         extra += '\nPATH_INFO: %r' % environ.get('PATH_INFO')
         extra += '\nHTTP_HOST: %r' % environ.get('HTTP_HOST')
-        app = httpexceptions.HTTPNotFound(
+        app = exc.HTTPNotFound(
             environ['PATH_INFO'],
-            comment=cgi.escape(extra)).wsgi_application
+            comment=cgi.escape(extra))
         return app(environ, start_response)
 
     def normalize_url(self, url, trim=True):

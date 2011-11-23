@@ -1,11 +1,11 @@
-from paste.urlmap import *
-from paste.fixture import *
+from urlmap import URLMap
+from webtest import TestApp
 
 def make_app(response_text):
     def app(environ, start_response):
-        headers = [('Content-type', 'text/html')]
+        headers = [('Content-type', 'text/html; charset=utf-8')]
         start_response('200 OK', headers)
-        return [response_text % environ]
+        return [(response_text % environ).encode('utf-8')]
     return app
 
 def test_map():
@@ -44,6 +44,6 @@ def test_404():
     mapper = URLMap({})
     app = TestApp(mapper, extra_environ={'HTTP_ACCEPT': 'text/html'})
     res = app.get("/-->%0D<script>alert('xss')</script>", status=404)
-    assert '--><script' not in res.body
+    assert '--><script' not in res.unicode_body
     res = app.get("/--%01><script>", status=404)
-    assert '--\x01><script>' not in res.body
+    assert '--\x01><script>' not in res.unicode_body
