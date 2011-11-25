@@ -9,7 +9,7 @@ import os
 import cgi
 from webob import exc
 
-__all__ = ['URLMap', 'PathProxyURLMap']
+__all__ = ['urlmap_factory', 'URLMap', 'PathProxyURLMap']
 
 def urlmap_factory(loader, global_conf, **local_conf):
     if 'not_found_app' in local_conf:

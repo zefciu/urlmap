@@ -1,21 +1,37 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+import os
+import sys
 from urlmap import URLMap
 from webtest import TestApp
+from paste.deploy import loadapp
 
-def make_app(response_text):
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(HERE)
+
+
+def make_app(global_conf, app_name):
+    text = '%s script_name="%%(SCRIPT_NAME)s" path_info="%%(PATH_INFO)s"'
+    response_text = text % app_name
     def app(environ, start_response):
         headers = [('Content-type', 'text/html; charset=utf-8')]
         start_response('200 OK', headers)
         return [(response_text % environ).encode('utf-8')]
     return app
 
+
+class Test(unittest.TestCase):
+    """Various tests for urlmap"""
+
+    def setUp(self):
+        self.mapper = urlmap_factory()
+
+
 def test_map():
-    mapper = URLMap({})
-    app = TestApp(mapper)
-    text = '%s script_name="%%(SCRIPT_NAME)s" path_info="%%(PATH_INFO)s"'
-    mapper[''] = make_app(text % 'root')
-    mapper['/foo'] = make_app(text % 'foo-only')
-    mapper['/foo/bar'] = make_app(text % 'foo:bar')
-    mapper['/f'] = make_app(text % 'f-only')
+    app = TestApp(loadapp('config:test_config.ini', relative_to=HERE))
     res = app.get('/')
     res.mustcontain('root')
     res.mustcontain('script_name=""')

@@ -21,10 +21,12 @@ setup(
       "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
       "Topic :: Software Development :: Libraries :: Python Modules",
       "Topic :: Internet :: WWW/HTTP :: WSGI",
-      "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
       "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
-      "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
       ],
+    entry_points = """
+      [paste.composite_factory]
+      main = urlmap:urlmap_factory
+    """,
     keywords='web application server wsgi',
     author="Szymon Pyżalski",
     author_email="szymon@pythonista.net",
@@ -34,5 +36,5 @@ setup(
     packages=['urlmap'],
     zip_safe=True,
     test_suite='nose.collector',
-    tests_require=['nose>=0.11', 'WebTest>=1.3.3'],
+    tests_require=['nose>=0.11', 'WebTest>=1.3.3', 'PasteDeploy'],
 )
