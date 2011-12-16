@@ -3,7 +3,7 @@ try:
 except ImportError:
     import unittest
 
-from util import make_app
+from urlmap.test.util import make_app
 import os
 import sys
 from paste.deploy import loadapp
