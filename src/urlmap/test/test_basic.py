@@ -47,8 +47,12 @@ class Test(unittest.TestCase):
     
     def test_404(self):
         self.mapper = URLMap()
+        self.mapper['/spam'] = make_app(None, 'spam')
         app = TestApp(self.mapper, extra_environ={'HTTP_ACCEPT': 'text/html'})
+
         res = app.get("/-->%0D<script>alert('xss')</script>", status=404)
         assert '--><script' not in res.unicode_body
+        assert 'defined apps' in res.unicode_body
+        assert '/spam' in res.unicode_body
         res = app.get("/--%01><script>", status=404)
         assert '--\x01><script>' not in res.unicode_body

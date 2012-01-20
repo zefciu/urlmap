@@ -8,7 +8,7 @@ import sys
 from webtest import TestApp
 from paste.deploy import loadapp
 
-from util import make_app
+from urlmap.test.util import make_app
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(HERE)

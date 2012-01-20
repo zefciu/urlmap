@@ -6,7 +6,10 @@ Map URL prefixes to WSGI applications.  See ``URLMap``
 
 import re
 import os
-import cgi
+try:
+    import html
+except ImportError:
+    import cgi as html
 from webob import exc
 
 __all__ = ['urlmap_factory', 'URLMap', 'PathProxyURLMap']
@@ -66,7 +69,7 @@ def parse_path_expression(path):
         s += path
     return s
 
-class URLMap(dict):
+class URLMap(object):
 
     """
     URLMap instances are dictionary-like object that dispatch to one
@@ -105,7 +108,7 @@ class URLMap(dict):
         extra += '\nHTTP_HOST: %r' % environ.get('HTTP_HOST')
         app = exc.HTTPNotFound(
             environ['PATH_INFO'],
-            comment=cgi.escape(extra))
+            comment=html.escape(extra))
         return app(environ, start_response)
 
     def normalize_url(self, url, trim=True):
@@ -113,6 +116,8 @@ class URLMap(dict):
             domain = url[0]
             url = self.normalize_url(url[1])[1]
             return domain, url
+        if not isinstance(url, str):
+            import pdb; pdb.set_trace()
         assert (not url or url.startswith('/')
                 or self.domain_url_re.search(url)), (
             "URL fragments must start with / or http:// (you gave %r)" % url)
@@ -167,6 +172,9 @@ class URLMap(dict):
         raise KeyError(
             "No application with the url %r (domain: %r; existing: %s)"
             % (url[1], url[0] or '*', self.applications))
+
+    def __contains__(self, url):
+        return self.normalize_url(url) in (app[0] for app in self.applications)
 
     def __delitem__(self, url):
         url = self.normalize_url(url)
