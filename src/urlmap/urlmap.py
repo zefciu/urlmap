@@ -176,6 +176,9 @@ class URLMap(object):
     def __contains__(self, url):
         return self.normalize_url(url) in (app[0] for app in self.applications)
 
+    def __bool__(self):
+        return bool(self.applications)
+
     def __delitem__(self, url):
         url = self.normalize_url(url)
         for app_url, app in self.applications:

@@ -56,3 +56,10 @@ class Test(unittest.TestCase):
         assert '/spam' in res.unicode_body
         res = app.get("/--%01><script>", status=404)
         assert '--\x01><script>' not in res.unicode_body
+
+    def test_empty_404(self):
+        """For empty mapper there should be no 'defined apps' secion"""
+        self.mapper = URLMap()
+        app = TestApp(self.mapper, extra_environ={'HTTP_ACCEPT': 'text/html'})
+        res = app.get("/spam", status=404)
+        assert 'defined apps' not in res.unicode_body
